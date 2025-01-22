@@ -10,7 +10,6 @@ public class MovementStateManager : MonoBehaviour
     
     private Vector2 _move;
     private bool _isRunning;
-    private bool _isAiming;
     bool runToggle = false;
 
     [SerializeField]  float _groundYOffset;
