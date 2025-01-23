@@ -9,13 +9,16 @@ public class RayCastShooting : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
     [SerializeField] private float damageRate = 50f;
     [SerializeField] private CinemachineCamera AimCamera;
-    
+    [SerializeField] private GameObject aimingPanel;
+    [SerializeField] private GameObject Gun;
+    private Camera _mainCamera;
     private bool _isShooting;
     private bool _isAiming;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        _mainCamera = Camera.main;
+        aimingPanel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -23,10 +26,14 @@ public class RayCastShooting : MonoBehaviour
     {
         
         AimCamera.Priority = _isAiming ? 100 : 0;
+        aimingPanel.SetActive(_isAiming);
+        
+         Ray ray2 = _mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+         Debug.DrawRay(ray2.origin, ray2.direction, Color.red);
         
         if (_isShooting)
         {
-            Ray ray = new Ray(transform.position, transform.forward);
+            Ray ray = new Ray(Gun.gameObject.transform.position, ray2.direction);
             Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.red);
             Debug.Log("shooting");
 

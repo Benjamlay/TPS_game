@@ -10,6 +10,7 @@ public class MovementStateManager : MonoBehaviour
     
     private Vector2 _move;
     private bool _isRunning;
+    private bool _isAiming;
     bool runToggle = false;
 
     [SerializeField]  float _groundYOffset;
@@ -73,12 +74,11 @@ public class MovementStateManager : MonoBehaviour
     void UpdateAnimator(Vector3 direction)
     {
         Vector3 localMove = transform.InverseTransformDirection(direction);
-
-        _animator.SetFloat("vInput", localMove.z);
-        _animator.SetFloat("hzInput", localMove.x);
+        
         
         bool isWalking = direction.magnitude > 0.1f;
         bool isRunning = isWalking && _isRunning;
+        bool isAiming = _isAiming;
 
         if (isWalking)
         {
@@ -89,8 +89,13 @@ public class MovementStateManager : MonoBehaviour
             _isRunning = false;
             runToggle = false;
         }
+        
+        _animator.SetFloat("vInput", localMove.z);
+        _animator.SetFloat("hzInput", localMove.x);
+        
         _animator.SetBool("Walking", isWalking);
         _animator.SetBool("Running", isRunning);
+        _animator.SetBool("Aiming", isAiming);
     }
     bool IsGrounded()
     {
@@ -129,5 +134,10 @@ public class MovementStateManager : MonoBehaviour
         
         _isRunning = runToggle;
         
+    }
+
+    public void IsAiming(InputAction.CallbackContext context)
+    {
+        _isAiming = context.ReadValueAsButton();
     }
 }
