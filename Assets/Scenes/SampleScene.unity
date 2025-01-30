@@ -2241,6 +2241,7 @@ MonoBehaviour:
   RightTrigger: {fileID: 1503140080}
   RightShoulder: {fileID: 1778986890}
   timerText: {fileID: 266371537}
+  EndOfTutorial: 0
 --- !u!1001 &923910760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4657,7 +4658,7 @@ MonoBehaviour:
   gravity: -9.81
   _rotationSpeed: 10
   Blaster: {fileID: 2033474114}
-  PlayerCapsule: {fileID: 1374179141}
+  PlayerSwat: {fileID: 814219082}
   ControllerPanel: {fileID: 1311481005}
   _direction: {x: 0, y: 0, z: 0}
 --- !u!143 &1711218083

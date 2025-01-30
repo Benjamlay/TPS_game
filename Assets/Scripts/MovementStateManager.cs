@@ -22,9 +22,11 @@ public class MovementStateManager : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 10f;
     private Vector3 _velocity;
     private Vector3 _spherePos;
+    
+    private float _angleVelocity;
 
     [SerializeField] private GameObject Blaster;
-    [SerializeField] private GameObject PlayerCapsule;
+    [FormerlySerializedAs("PlayerCapsule")] [SerializeField] private Transform PlayerSwat;
     
     [SerializeField] private GameObject ControllerPanel;
     
@@ -49,6 +51,7 @@ public class MovementStateManager : MonoBehaviour
         Gravity();
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     void GetDirectionAndMove()
     {
         
@@ -60,11 +63,14 @@ public class MovementStateManager : MonoBehaviour
             cameraRight.y = 0f;
 
             Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
-        
+
+            if (!_isAiming)
+            {
+                ReplaceCharacter(Camera.main.transform);
+            }
             if (_isAiming)
             {
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-                //transform.rotation = Quaternion.Slerp(PlayerCapsule.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
             }
         
             _direction = cameraForward * _move.y + cameraRight * _move.x;
@@ -163,5 +169,17 @@ public class MovementStateManager : MonoBehaviour
         }
         
         _SeeControls = ControlsOnScreen;
+    }
+
+    public void ReplaceCharacter(Transform cameraTransform)
+    {
+        Debug.Log("Replacing character");
+        
+        float targetAngle = cameraTransform.rotation.eulerAngles.y;
+        targetAngle += Mathf.Atan2(_move.x, _move.y) * Mathf.Rad2Deg;
+    
+        float actualAngle = Mathf.SmoothDampAngle(PlayerSwat.eulerAngles.y, targetAngle, ref _angleVelocity, 0.25f);
+    
+        PlayerSwat.rotation = Quaternion.Euler(0, actualAngle, 0);
     }
 }

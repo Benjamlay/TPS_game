@@ -17,6 +17,7 @@ public class TutorialController : MonoBehaviour
     
     [SerializeField] public TextMeshProUGUI timerText;
     private float elapsedTime = 0f;  
+    public bool EndOfTutorial = false;
     
     // private float TimeBeforeTutorial = 5f;
     // private float TimeBetweenActions = 5f;
@@ -37,8 +38,11 @@ public class TutorialController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        elapsedTime += Time.deltaTime;
-        UpdateTimerDisplay();
+        if (EndOfTutorial)
+        {
+            elapsedTime += Time.deltaTime;
+            UpdateTimerDisplay();
+        }
     }
     
     public IEnumerator TutoMove()
@@ -63,6 +67,7 @@ public class TutorialController : MonoBehaviour
         LeftShoulder.SetActive(false);
         background.enabled = false;
         XboxController.SetActive(false);
+        EndOfTutorial = true;
     }
     
     void UpdateTimerDisplay()
