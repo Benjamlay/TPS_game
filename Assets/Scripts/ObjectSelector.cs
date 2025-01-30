@@ -15,7 +15,7 @@ public class ObjectSelector : MonoBehaviour
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(_mousePosition);
-        Debug.DrawRay(ray.origin, ray.direction, Color.red);
+       // Debug.DrawRay(ray.origin, ray.direction, Color.red);
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {

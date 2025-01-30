@@ -11,7 +11,9 @@ public class MovementStateManager : MonoBehaviour
     private Vector2 _move;
     private bool _isRunning;
     private bool _isAiming;
+    private bool _SeeControls;
     bool runToggle = false;
+    bool ControlsOnScreen = false;
 
     [SerializeField]  float _groundYOffset;
     [SerializeField] private LayerMask _groundMask;
@@ -20,12 +22,14 @@ public class MovementStateManager : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 10f;
     private Vector3 _velocity;
     private Vector3 _spherePos;
+
+    [SerializeField] private GameObject Blaster;
+    [SerializeField] private GameObject PlayerCapsule;
+    
+    [SerializeField] private GameObject ControllerPanel;
     
     private Animator _animator;
     CharacterController _controller;
-    
-    //[SerializeField] CinemachineCamera _virtualCamera;
-    //private Transform _cameraTransform;
     
     [HideInInspector] public Vector3 _direction;
     
@@ -35,7 +39,7 @@ public class MovementStateManager : MonoBehaviour
     {
         _controller = GetComponent<CharacterController>();
         _animator = GetComponentInChildren<Animator>();
-        //_cameraTransform = _virtualCamera.transform;
+        ControllerPanel.SetActive(false);
     }
 
     // Update is called once per frame
@@ -47,28 +51,36 @@ public class MovementStateManager : MonoBehaviour
 
     void GetDirectionAndMove()
     {
-        Vector3 cameraForward = Camera.main.transform.forward;
-        cameraForward.y = 0f;
-        
-        Vector3 cameraRight = Camera.main.transform.right;
-        cameraRight.y = 0f;
         
         
-        _direction = cameraForward * _move.y + cameraRight * _move.x;
-        //_direction.Normalize();
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0f;
         
-        float speed = _isRunning ? _runSpeed : _moveSpeed;
-        
-        _controller.Move(_direction * (speed * Time.deltaTime));
-        
+            Vector3 cameraRight = Camera.main.transform.right;
+            cameraRight.y = 0f;
 
-        if (_direction.magnitude > 0.1f)
-        {
             Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-        }
+        
+            if (_isAiming)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+                //transform.rotation = Quaternion.Slerp(PlayerCapsule.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            }
+        
+            _direction = cameraForward * _move.y + cameraRight * _move.x;
+        
+            float speed = _isRunning ? _runSpeed : _moveSpeed;
+        
+            _controller.Move(_direction * (speed * Time.deltaTime));
+        
 
-        UpdateAnimator(_direction);
+            if (_direction.magnitude > 0.1f)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+            }
+
+            UpdateAnimator(_direction);
+        
     }
 
     void UpdateAnimator(Vector3 direction)
@@ -114,7 +126,7 @@ public class MovementStateManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
+        //Gizmos.color = Color.red;
        // Gizmos.DrawWireSphere(_spherePos, _controller.radius - 0.05f);
     }
     
@@ -139,5 +151,17 @@ public class MovementStateManager : MonoBehaviour
     public void IsAiming(InputAction.CallbackContext context)
     {
         _isAiming = context.ReadValueAsButton();
+    }
+
+    public void SeeControls(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            _SeeControls = context.ReadValueAsButton();
+            ControlsOnScreen = !ControlsOnScreen;
+            ControllerPanel.SetActive(ControlsOnScreen? true : false);
+        }
+        
+        _SeeControls = ControlsOnScreen;
     }
 }
