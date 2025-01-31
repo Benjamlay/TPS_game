@@ -36,6 +36,12 @@ public class MovementStateManager : MonoBehaviour
     [HideInInspector] public Vector3 _direction;
     
     
+    [SerializeField] public Transform  normalCamera;
+    [SerializeField] public Transform  aimCamera;
+    [SerializeField] private Transform camFollowTarget;
+
+    private Camera Camera;
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -50,27 +56,24 @@ public class MovementStateManager : MonoBehaviour
         GetDirectionAndMove();
         Gravity();
     }
-
-    // ReSharper disable Unity.PerformanceAnalysis
+    
     void GetDirectionAndMove()
     {
-        
-        
             Vector3 cameraForward = Camera.main.transform.forward;
             cameraForward.y = 0f;
+            cameraForward.Normalize(); 
         
             Vector3 cameraRight = Camera.main.transform.right;
             cameraRight.y = 0f;
-
-            Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
-
-            if (!_isAiming)
-            {
-                ReplaceCharacter(Camera.main.transform);
-            }
+            cameraRight.Normalize();
+            
+           
+            
+            
             if (_isAiming)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
+                Quaternion TargetRotation = Quaternion.LookRotation(cameraForward);
+                transform.rotation = Quaternion.Slerp(transform.rotation, TargetRotation, _rotationSpeed * Time.deltaTime);
             }
         
             _direction = cameraForward * _move.y + cameraRight * _move.x;
@@ -82,6 +85,7 @@ public class MovementStateManager : MonoBehaviour
 
             if (_direction.magnitude > 0.1f)
             {
+                Quaternion targetRotation = Quaternion.LookRotation(cameraForward);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
             }
 
@@ -170,16 +174,5 @@ public class MovementStateManager : MonoBehaviour
         
         _SeeControls = ControlsOnScreen;
     }
-
-    public void ReplaceCharacter(Transform cameraTransform)
-    {
-        Debug.Log("Replacing character");
-        
-        float targetAngle = cameraTransform.rotation.eulerAngles.y;
-        targetAngle += Mathf.Atan2(_move.x, _move.y) * Mathf.Rad2Deg;
     
-        float actualAngle = Mathf.SmoothDampAngle(PlayerSwat.eulerAngles.y, targetAngle, ref _angleVelocity, 0.25f);
-    
-        PlayerSwat.rotation = Quaternion.Euler(0, actualAngle, 0);
-    }
 }

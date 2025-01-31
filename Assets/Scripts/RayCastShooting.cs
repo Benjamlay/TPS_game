@@ -40,7 +40,6 @@ public class RayCastShooting : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         lastShotTime += Time.deltaTime;
         
         AimCamera.Priority = _isAiming ? 100 : 0;
@@ -108,4 +107,6 @@ public class RayCastShooting : MonoBehaviour
     {
         _isAiming = context.ReadValueAsButton();
     }
+    
+    
 }
