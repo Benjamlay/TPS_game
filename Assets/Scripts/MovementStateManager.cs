@@ -67,9 +67,6 @@ public class MovementStateManager : MonoBehaviour
             cameraRight.y = 0f;
             cameraRight.Normalize();
             
-           
-            
-            
             if (_isAiming)
             {
                 Quaternion TargetRotation = Quaternion.LookRotation(cameraForward);
